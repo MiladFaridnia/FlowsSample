@@ -23,7 +23,7 @@ class Screen1ViewModel : ViewModel() {
          * */
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(), // It stops when no collector is active
+            started = SharingStarted.WhileSubscribed(5000), // It stops when no collector is active
             initialValue = 0
         )
 }

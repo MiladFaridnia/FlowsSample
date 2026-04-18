@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -37,7 +38,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     composable(route = "screen1") {
                         val viewModel = viewModel<Screen1ViewModel>()
-                        val time by viewModel.timer.collectAsState()
+                        val time by viewModel.timer.collectAsStateWithLifecycle()
                         Screen1(
                             time = time,
                             onButtonClick = {
