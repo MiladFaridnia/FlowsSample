@@ -13,12 +13,17 @@ class Screen1ViewModel : ViewModel() {
     val timer = flow {
         while (true) {
             delay(1000L)
-            println("flow is active")
+            println("flow is active $currentTime")
             emit(currentTime++)
         }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.Lazily,
-        initialValue = 0
-    )
+    }
+        /**
+         * stateIn Convert normal flow to stateflow
+         * It caches the latest value
+         * */
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily, // Flow will start as soon s first collector appears and never stops until scope is canceled
+            initialValue = 0
+        )
 }
