@@ -1,4 +1,4 @@
-package com.faridnia.flowsample
+package com.faridnia.flowsample.collect_state_2
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
