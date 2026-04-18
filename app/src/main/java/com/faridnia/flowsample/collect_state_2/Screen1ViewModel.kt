@@ -23,7 +23,7 @@ class Screen1ViewModel : ViewModel() {
          * */
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Lazily, // Flow will start as soon s first collector appears and never stops until scope is canceled
+            started = SharingStarted.WhileSubscribed(), // It stops when no collector is active
             initialValue = 0
         )
 }
