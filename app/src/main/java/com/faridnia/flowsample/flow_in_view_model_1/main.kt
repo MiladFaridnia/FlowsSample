@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -40,12 +41,14 @@ class MyViewModel /*: ViewModel() */ {
                     _state.update { it.copy(isLoading = true) }
                     println("onStart " + state.value)
 
+                }.onEach { result ->
+                    println("onEach " + state.value)
                 }
                 .catch { e ->
-                    _state.value = UiState(error = e.message)
+                    _state.value = UiState(isLoading = false, error = e.message)
                     println("catch " + state.value)
                 }
-                .onCompletion {
+                .onCompletion { cause ->
                     _state.value = UiState(isLoading = false)
                     println("Flow Finished " + state.value)
                 }
@@ -57,8 +60,8 @@ class MyViewModel /*: ViewModel() */ {
     }
 
     private fun getDataFlow(): Flow<List<String>> = flow {
-        delay(1000)
         println("emitting items " + state.value)
+        delay(1000)
         emit(listOf("Item 1", "Item 2", "Item 3"))
         println("after emitting items " + state.value)
         throw RuntimeException("Exception occurred")
