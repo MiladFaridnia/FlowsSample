@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -35,7 +36,8 @@ class MyViewModel /*: ViewModel() */ {
         GlobalScope.launch {
             getDataFlow()
                 .onStart {
-                    _state.value = UiState(isLoading = true)
+                    //_state.value = UiState(isLoading = true)
+                    _state.update { it.copy(isLoading = true) }
                     println("onStart " + state.value)
 
                 }
@@ -44,6 +46,7 @@ class MyViewModel /*: ViewModel() */ {
                     println("catch " + state.value)
                 }
                 .onCompletion {
+                    _state.value = UiState(isLoading = false)
                     println("Flow Finished " + state.value)
                 }
                 .collect { result ->
@@ -58,7 +61,8 @@ class MyViewModel /*: ViewModel() */ {
         println("emitting items " + state.value)
         emit(listOf("Item 1", "Item 2", "Item 3"))
         println("after emitting items " + state.value)
-
+        throw RuntimeException("Exception occurred")
+        emit(listOf("Item 3", "Item 4", "Item 5"))
     }
 }
 

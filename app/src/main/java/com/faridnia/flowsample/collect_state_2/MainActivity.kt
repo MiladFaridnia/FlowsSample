@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -39,6 +40,11 @@ class MainActivity : ComponentActivity() {
                     composable(route = "screen1") {
                         val viewModel = viewModel<Screen1ViewModel>()
                         val time by viewModel.timer.collectAsStateWithLifecycle()
+
+                        LaunchedEffect(time) {
+                            println("collecting time $time")
+                        }
+
                         Screen1(
                             time = time,
                             onButtonClick = {
@@ -47,8 +53,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(route = "screen2") {
-                        Screen2(1)
-
+                        Screen2()
                     }
                 }
             }
@@ -80,14 +85,14 @@ fun Screen1(time: Int, onButtonClick: () -> Unit) {
 }
 
 @Composable
-fun Screen2(time: Int) {
+fun Screen2() {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Scren 2 $time!",
+            text = "Second Screen",
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
@@ -113,8 +118,6 @@ fun Screen1Preview() {
 @Composable
 fun Screen2Preview() {
     FlowSampleTheme {
-        Screen2(
-            time = 1
-        )
+        Screen2()
     }
 }
