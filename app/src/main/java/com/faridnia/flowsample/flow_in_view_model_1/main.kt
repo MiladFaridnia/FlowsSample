@@ -7,7 +7,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -17,11 +20,10 @@ import kotlinx.coroutines.runBlocking
 fun main() = runBlocking {
     val myVm = MyViewModel()
     myVm.loadData()
-	myVm.loadData()
+    myVm.loadData()
 
     delay(2000)
 }
-
 
 
 class MyViewModel /*: ViewModel() */ {
@@ -35,13 +37,20 @@ class MyViewModel /*: ViewModel() */ {
         GlobalScope.launch {
             getDataFlow()
                 .onStart {
-                    _state.value = UiState(isLoading = true)
+                    //_state.value = UiState(isLoading = true)
+                    _state.update { it.copy(isLoading = true) }
                     println("onStart " + state.value)
 
+                }.onEach { result ->
+                    println("onEach " + state.value)
                 }
                 .catch { e ->
-                    _state.value = UiState(error = e.message)
+                    _state.value = UiState(isLoading = false, error = e.message)
                     println("catch " + state.value)
+                }
+                .onCompletion { cause ->
+                    _state.value = UiState(isLoading = false)
+                    println("Flow Finished " + state.value)
                 }
                 .collect { result ->
                     _state.value = UiState(data = result)
@@ -51,11 +60,12 @@ class MyViewModel /*: ViewModel() */ {
     }
 
     private fun getDataFlow(): Flow<List<String>> = flow {
+        println("emitting items " + state.value)
         delay(1000)
-        println("emmiting items " + state.value)
         emit(listOf("Item 1", "Item 2", "Item 3"))
-        println("after emmiting items " + state.value)
-
+        println("after emitting items " + state.value)
+        throw RuntimeException("Exception occurred")
+        emit(listOf("Item 3", "Item 4", "Item 5"))
     }
 }
 
