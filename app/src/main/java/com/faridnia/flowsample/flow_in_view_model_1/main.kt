@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -17,11 +18,10 @@ import kotlinx.coroutines.runBlocking
 fun main() = runBlocking {
     val myVm = MyViewModel()
     myVm.loadData()
-	myVm.loadData()
+    myVm.loadData()
 
     delay(2000)
 }
-
 
 
 class MyViewModel /*: ViewModel() */ {
@@ -43,6 +43,9 @@ class MyViewModel /*: ViewModel() */ {
                     _state.value = UiState(error = e.message)
                     println("catch " + state.value)
                 }
+                .onCompletion {
+                    println("Flow Finished " + state.value)
+                }
                 .collect { result ->
                     _state.value = UiState(data = result)
                     println("collect " + state.value)
@@ -52,9 +55,9 @@ class MyViewModel /*: ViewModel() */ {
 
     private fun getDataFlow(): Flow<List<String>> = flow {
         delay(1000)
-        println("emmiting items " + state.value)
+        println("emitting items " + state.value)
         emit(listOf("Item 1", "Item 2", "Item 3"))
-        println("after emmiting items " + state.value)
+        println("after emitting items " + state.value)
 
     }
 }
